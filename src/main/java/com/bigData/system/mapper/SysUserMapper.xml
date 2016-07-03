@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bigData.system.mapper.SysUserMapper">
+	<resultMap type="com.bigData.system.bean.SysUser" id="BaseResultMap">
+		<id column="User_ID" property="userId" />
+		<result column="User_Name" property="userName" />
+		<result column="password" property="password" />
+		<result column="Last_Sign_DATE" property="lastSignDate" />
+		<result column="Last_Sign_Time" property="lastSignTime" />
+		<result column="sign_state" property="signState" />
+		<result column="create_date" property="createDate" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		User_ID, User_Name, password, Last_Sign_DATE,
+		Last_Sign_Time, sign_state,
+		create_date,
+		create_time
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from sys_user
+		where User_ID = #{userId}
+	</select>
+	<select id="query" parameterType="com.bigData.system.bean.SysUser"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from sys_user
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="com.bigData.system.bean.SysUser">
+		delete from
+		sys_user
+		where User_ID = #{userId}
+	</delete>
+	<insert id="insert" parameterType="com.bigData.system.bean.SysUser">
+		insert into sys_user (User_ID,
+		User_Name, password, Last_Sign_DATE,
+		Last_Sign_Time, sign_state,
+		create_date, create_time
+		)
+		values (#{userId}, #{userName}, #{password},
+		#{lastSignDate},
+		#{lastSignTime}, #{signState}, #{createDate},
+		#{createTime}
+		)
+	</insert>
+	<update id="updateBySelective"  parameterType="com.bigData.system.bean.SysUser" >
+		update sys_user 
+		<set>
+			<if test="userName != null">
+				User_Name = #{userName},
+			</if>
+			<if test="password != null">
+				password = #{password},
+			</if>
+			<if test="lastSignDate != null">
+				Last_Sign_DATE = #{lastSignDate},
+			</if>
+			<if test="lastSignTime != null">
+				Last_Sign_Time = #{lastSignTime},
+			</if>
+			<if test="signState != null">
+				sign_state = #{signState},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime},
+			</if>
+		</set>
+		where User_ID=#{userId}
+	</update>
+</mapper>

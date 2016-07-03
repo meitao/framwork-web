@@ -31,9 +31,26 @@
 				<value>classpath:com/bigData/fanal/mapper/*_mapper.xml</value>
 			</list>
 		</property>
-		<property name="typeHandlersPackage" value="com.bigData.fanal.dao" />
-		<!-- <property name="plugins"> <list> <ref bean="myBatisSQLInterceptor"/> 
-			</list> </property> -->
+		<property name="plugins">
+		    <array>
+		      <bean class="com.github.pagehelper.PageHelper">
+		        <property name="properties">
+		          <value>
+		            dialect=mysql
+		            offsetAsPageNum=true
+		            rowBoundsWithCount=true
+		            pageSizeZero=true
+		            reasonable=true
+		            supportMethodsArguments=true
+		            returnPageInfo=true
+		          </value>
+		        </property>
+		      </bean>
+		    </array>
+		  </property>
+		<!--<property name="typeHandlersPackage" value="com.bigData.fanal.dao,com.bigData.system.mapper.SysUserMapper" 
+			/> <property name="plugins"> <list> <ref bean="myBatisSQLInterceptor"/> </list> 
+			</property> -->
 	</bean>
 
 	<!-- 配置事务管理器 -->
@@ -42,10 +59,36 @@
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-
-	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.bigData.fanal.mapper" />
-		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	<bean id="transactionInterceptor"
+		class="org.springframework.transaction.interceptor.TransactionInterceptor">
+		<property name="transactionManager" ref="transactionManager" />
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
 	</bean>
 
+	<bean
+		class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+		<property name="beanNames">
+			<list>
+				<value>*Service*</value>
+			</list>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<value>transactionInterceptor</value>
+			</list>
+		</property>
+
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage"
+			value="com.bigData.fanal.mapper,com.bigData.system.mapper" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+	
+	
 </beans>
